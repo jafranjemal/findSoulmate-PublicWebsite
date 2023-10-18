@@ -1,6 +1,6 @@
 {
   "name": "find-soulmate-public-website",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "private": true,
   "dependencies": {
     "@date-io/date-fns": "^2.16.0",
