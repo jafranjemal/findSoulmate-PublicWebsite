@@ -1,6 +1,6 @@
 {
   "name": "find-soulmate-public-website",
-  "version": "0.1.0",
+  "version": "1.0.14",
   "private": true,
   "dependencies": {
     "@date-io/date-fns": "^2.16.0",
@@ -26,10 +26,12 @@
     "date-fns": "^2.30.0",
     "dayjs": "^1.11.7",
     "get-srilanka-districts-cities": "^1.0.3",
+    "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-datepicker": "^4.11.0",
     "react-dom": "^18.2.0",
+    "react-phone-input-2": "^2.15.1",
     "react-redux": "^8.1.0",
     "react-router-dom": "^6.11.2",
     "react-scripts": "5.0.1",

@@ -3,10 +3,24 @@ import logo from "./assets/images/Logo_LS.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Popup from "./components/Popup";
 import Register from "./Register";
+import { removeError } from "./features/profile/Profile.slice";
+import { useDispatch, useSelector } from "react-redux";
 
 const Header = () => {
   const [trigerStatus, setTrigerStatus] = useState(false);
+  const [active, setActive] = useState(false);
+  const { stepOne, isSaved, stepTwo, registerError, errorMsg, profilePicture } =
+    useSelector((state) => state.profile);
+  const dispatch = useDispatch();
 
+  function ScrollUp() {
+    window.scrollTo(0, 0);
+  }
+
+  const ToggleButton = () => {
+    setActive((e) => !e);
+   // console.log("clicked", active);
+  };
   return (
     <div>
       <header id="home" className="header">
@@ -18,8 +32,19 @@ const Header = () => {
                   <a className="navbar-brand" href="index.html">
                     {/* <img src="src\assets\images\Logo_LS.png" alt="Logo" /> */}
                     <img src={logo} alt="logo" />
+                    <h6
+                      style={{
+                        backgroundColor: "red",
+                        padding: "5px",
+                        color: "white",
+                        textAlign: "center",
+                        marginTop: 4,
+                      }}
+                    >
+                      findsoulmate PVT LTD.
+                    </h6>
                   </a>
-                  <button
+                  {/* <button
                     className="navbar-toggler"
                     type="button"
                     data-toggle="collapse"
@@ -27,13 +52,28 @@ const Header = () => {
                     aria-controls="navbarSupportedContent"
                     aria-expanded="false"
                     aria-label="Toggle navigation"
+                  > */}
+
+                  <button
+                    onClick={() => ToggleButton()}
+                    className="navbar-toggler"
+
+                    // data-toggle="collapse"
+                    // data-target="#navbarSupportedContent"
+                    // aria-controls="navbarSupportedContent"
+                    // aria-expanded="false"
+                    // aria-label="Toggle navigation"
                   >
                     <span className="toggler-icon" />
                     <span className="toggler-icon" />
                     <span className="toggler-icon" />
                   </button>
+
                   <div
-                    className="collapse navbar-collapse sub-menu-bar"
+                    className={
+                      "navbar-collapse sub-menu-bar" +
+                      (active ? " active" : " collapse")
+                    }
                     id="navbarSupportedContent"
                   >
                     <ul id="nav" className="navbar-nav ml-auto">
@@ -43,28 +83,38 @@ const Header = () => {
                         </a>
                       </li>
                       <li className="nav-item">
+                        <a className="page-scroll" href="#events">
+                          Events
+                        </a>
+                      </li>
+                      <li className="nav-item">
                         <a className="page-scroll" href="#services">
                           Services
                         </a>
                       </li>
                       <li className="nav-item">
                         <a className="page-scroll" href="#team">
-                          Team
+                          Testimonial
                         </a>
                       </li>
-                      <li className="nav-item">
+                      {/* <li className="nav-item">
                         <a className="page-scroll" href="#pricing">
                           Pricing
                         </a>
-                      </li>
+                      </li> */}
                       <li className="nav-item">
                         <a className="page-scroll" href="#testimonial">
-                          Testimonial
+                          Screenshots
                         </a>
                       </li>
                       <li className="nav-item">
                         <a className="page-scroll" href="#contact">
                           Contact
+                        </a>
+                      </li>
+                      <li className="nav-item">
+                        <a className="page-scroll" href="#aboutus">
+                          About Us
                         </a>
                       </li>
                     </ul>
@@ -80,7 +130,7 @@ const Header = () => {
           <div className="row align-items-center">
             <div className="col-lg-7 col-md-12 col-sm-12 col-xs-12">
               <div className="contents">
-                <h2 className="head-title">Find Soul Mate</h2>
+                <h2 className="head-title">Find Soulmate</h2>
                 <p>
                   Looking for your soulmate? Look no further than Find Soulmate,{" "}
                   <br />
@@ -89,26 +139,19 @@ const Header = () => {
                   user-friendly interface and advanced search algorithms, you
                   can easily find and connect with potential matches based on
                   your preferences and interests. Whether you're looking for a
-                  life partner or just starting to explore the dating scene,
-                  Find Soulmate has everything you need to make meaningful
-                  connections. Download the app today and start your journey
-                  towards finding true love!
+                  life partner Find Soulmate has everything you need to make
+                  meaningful connections. <br />
+                  <b>
+                    <i>
+                      Download the app today and start your journey towards
+                      finding true love!
+                    </i>
+                  </b>
                 </p>
                 <div className="header-button">
-                  <a
-                    href="https://uideck.com/products/fusion-app-business-saas-product-landing-page-template/"
-                    rel="nofollow"
-                    className="btn btn-common"
-                  >
+                  <a href="#download" rel="nofollow" className="btn btn-common">
                     Download Now
                   </a>
-                  {/* <a
-                    href="https://uideck.com/products/fusion-app-business-saas-product-landing-page-template/"
-                    rel="nofollow"
-                    className="btn btn-border video-popup"
-                  >
-                    Learn More
-                  </a> */}
 
                   <button
                     onClick={() => setTrigerStatus(true)}
@@ -120,10 +163,15 @@ const Header = () => {
                     trigger={trigerStatus}
                     popupClose={() => {
                       setTrigerStatus(false);
+                      if (registerError) {
+                        //clear msg
+                        dispatch(removeError());
+                      }
                     }}
                   >
                     {/* <h1>Fill This Form </h1> */}
-                    <Register />
+                <Register stepChanged={ScrollUp} modelClosed={() => setTrigerStatus(false)} />
+
                   </Popup>
                 </div>
               </div>

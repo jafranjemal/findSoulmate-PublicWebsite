@@ -29,7 +29,7 @@
 import React from 'react';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
-const DropBox = ({ labelText, value, items, onChange, name }) => {
+const DropBox = ({ labelText, value, items, onChange, name ,  readOnly=false}) => {
   const renderItems = () => {
     if (items && items.length > 0) {
       return items.map((item) => (
@@ -47,6 +47,8 @@ const DropBox = ({ labelText, value, items, onChange, name }) => {
     <FormControl fullWidth>
       <InputLabel id="demo-simple-select-label">{labelText}</InputLabel>
       <Select
+
+      readOnly={readOnly}
         labelId="demo-simple-select-label"
         id="demo-simple-select"
         value={defaultValue === undefined ? "" : defaultValue}

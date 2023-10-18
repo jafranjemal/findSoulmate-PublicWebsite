@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component, useEffect, useRef, useState } from "react";
 import shakeela from "./assets/images/6NeKCCvrsE3f.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import playstore from "./assets/images/play-store.png";
@@ -11,9 +11,80 @@ import img5 from "./assets/images/5.jpg";
 import img6 from "./assets/images/6.jpg";
 import Popup from "./components/Popup";
 import Register from "./Register";
+import { Button } from "@mui/material";
+import { Grid } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import EventRegistrationForm from "./EventRegistrationForm";
+import {
+  Typography,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from "@material-ui/core";
+import {
+  Event,
+  AccessTime,
+  LocationOn,
+  MonetizationOn,
+  Person,
+} from "@material-ui/icons";
+import { removeError } from "./features/profile/Profile.slice";
+import { useDispatch, useSelector } from "react-redux";
+
+const useStyles = makeStyles((theme) => ({
+  list: {
+    marginBottom: theme.spacing(1),
+  },
+}));
 
 const Body = () => {
+  const classes = useStyles();
   const [trigerStatus, setTrigerStatus] = useState(false);
+  const [eventRegisterForm, setEventRegisterForm] = useState(false);
+  const { stepOne, isSaved, stepTwo, registerError, errorMsg, profilePicture } =
+    useSelector((state) => state.profile);
+  const dispatch = useDispatch();
+
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (trigerStatus) {
+      document.body.style.position = "fixed";
+    } else {
+      document.body.style.position = "relative";
+    }
+  }, [trigerStatus]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    let scroll = 0;
+
+    const slideImages = () => {
+      scroll += 1;
+      container.scrollLeft = scroll;
+
+      if (
+        container.scrollLeft >=
+        container.scrollWidth - container.clientWidth
+      ) {
+        container.scrollLeft = 0;
+        scroll = 0;
+      }
+
+      requestAnimationFrame(slideImages);
+    };
+
+    const animationId = requestAnimationFrame(slideImages);
+
+    return () => {
+      cancelAnimationFrame(animationId);
+    };
+  }, []);
+
+  function ScrollUp() {
+    window.scrollTo(0, 0);
+  }
 
   return (
     <div>
@@ -322,6 +393,128 @@ const Body = () => {
           </div>
         </div>
       </section>
+      <section id="events" className="section-padding bg-gray">
+        <div className="container">
+          <div className="section-header text-center">
+            <h2 className="section-title wow fadeInDown" data-wow-delay="0.3s">
+              Up coming Events
+            </h2>
+            <div className="shape wow fadeInDown" data-wow-delay="0.3s" />
+          </div>
+
+          <Grid
+            style={{
+              backgroundColor: "white",
+              boxShadow: "0 4px 10px 0 rgba(0,0,0,.25)",
+            }}
+            container
+          >
+            <Grid item xs={12} sm={6} md={6}>
+              <div
+                style={{
+                  width: "100%",
+                  height: 600,
+
+                  boxShadow: "0 4px 10px 0 rgba(0,0,0,.25)",
+                }}
+              >
+                <img
+                  style={{
+                    objectFit: "cover",
+                    height: "100%",
+                    width: "100%",
+                    overflow: "hidden",
+                    boxShadow: "0 4px 10px 0 rgba(0,0,0,.25)",
+                  }}
+                  src="https://wallpapers.com/images/hd/couple-holding-hand-pictures-5zb19dei61erkrlv.jpg"
+                  alt="Couple"
+                />
+              </div>
+            </Grid>
+            <Grid item xs={12} sm={6} md={6}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "100%",
+                  padding: 20,
+                }}
+              >
+                <h1
+                  style={{
+                    textTransform: "uppercase",
+                    textAlign: "center",
+                  }}
+                >
+                  Pre marital & Marital One Day workshop
+                </h1>
+                <List className={classes.list}>
+                  <ListItem>
+                    <ListItemIcon>
+                      <MonetizationOn color="error" />
+                    </ListItemIcon>
+                    <ListItemText primary="Price: " secondary="FREE" />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <Person color="error" />
+                    </ListItemIcon>
+                    <ListItemText
+                      secondary="Ash. M.N.Aalif Ali
+Islahi | B.A. | Psychological Counselor | Al-Quran & Science Researcher | IHRDP - Pakistan"
+                      primary="Resource Person: "
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <LocationOn color="error" />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="Venue: "
+                      secondary="Jamiah Naleemiah, Beruwala, Sri Lanka"
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <Event color="error" />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="Date: "
+                      secondary="October 16th, 2023"
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <AccessTime color="error" />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="Time: "
+                      secondary="8.00 am to 1.00 pm"
+                    />
+                  </ListItem>
+                </List>
+                <Button
+                  onClick={() => setEventRegisterForm(true)}
+                  variant="contained"
+                  style={{ boxShadow: "0 4px 10px 0 rgba(0,0,0,.25)" }}
+                >
+                  Register Now
+                </Button>
+              </div>
+            </Grid>
+          </Grid>
+
+          <Popup
+            trigger={eventRegisterForm}
+            popupClose={() => {
+              setEventRegisterForm(false);
+            }}
+          >
+            {/* <h1>Fill This Form </h1> */}
+            <EventRegistrationForm />
+          </Popup>
+        </div>
+      </section>
       <section id="team" className="section-padding bg-gray">
         <div className="container">
           <div className="section-header text-center">
@@ -333,10 +526,12 @@ const Body = () => {
           <div className="row">
             <div className="col-lg-6 col-md-12 col-xs-12">
               <div className="team-item wow fadeInRight" data-wow-delay="0.2s">
-                <div className="team-img">
-                  <img className="img-fluid" src="images/man.jpeg" />
-                </div>
-                <div className="contetn">
+                <img
+                  className="team-img"
+                  src="https://photo8.wambacdn.net/90/91/02/1792201909/2110084767_huge.jpg?hash=bzAVizl95S6FWPJ2mEtpQg&expires=64060578000&updated=1648736384"
+                />
+
+                <div className="content">
                   <div className="info-text">
                     <h3>
                       <a href="#">Abdul Halidh</a>
@@ -344,11 +539,10 @@ const Body = () => {
                     {/* <p>Front-end Developer</p> */}
                   </div>
                   <p>
-                    "I was skeptical about online matrimony services, but Find
-                    Soulmate has completely changed my mind. The app is safe and
-                    secure, and I love that I can control who can see my profile
-                    and communicate with me. I've already connected with a few
-                    great matches and I'm looking forward to meeting more."{" "}
+                    "I'm Abdul Halidh, the Saudi-based engineer, giving two
+                    thumbs up to Find Soulmate. If you're looking for a fresh
+                    start like me, tap that download button – your next chapter
+                    could start real soon. Cheers to new beginnings! 🌟
                   </p>
                   {/* <ul className="social-icons">
                   <li><a href="#"><i className="lni lni-facebook-filled" aria-hidden="true" /></a></li>
@@ -360,10 +554,12 @@ const Body = () => {
             </div>
             <div className="col-lg-6 col-md-12 col-xs-12">
               <div className="team-item wow fadeInRight" data-wow-delay="0.4s">
-                <div className="team-img">
-                  <img className="img-fluid" src="images/girl.jpg" />
-                </div>
-                <div className="contetn">
+                <img
+                  className="team-img"
+                  src="https://c.files.bbci.co.uk/C333/production/_115517994_naziapic.jpg"
+                />
+
+                <div className="content">
                   <div className="info-text">
                     <h3>
                       <a href="#">Fathima Sarah</a>
@@ -371,66 +567,12 @@ const Body = () => {
                     {/* <p>Product Designer</p> */}
                   </div>
                   <p>
-                    "I've been using Find Soulmate for a few months now and I
-                    couldn't be happier with the results. I've met several
-                    amazing people and I'm excited to see where things go. The
-                    app is easy to use and the advanced search filters make it
-                    easy to find compatible matches. Highly recommend!"
-                  </p>
-                  {/* <ul className="social-icons">
-                  <li><a href="#"><i className="lni lni-facebook-filled" aria-hidden="true" /></a></li>
-                  <li><a href="#"><i className="lni lni-twitter-filled" aria-hidden="true" /></a></li>
-                  <li><a href="#"><i className="lni lni-instagram-filled" aria-hidden="true" /></a></li>
-                </ul> */}
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-6 col-md-12 col-xs-12">
-              <div className="team-item wow fadeInRight" data-wow-delay="0.6s">
-                <div className="team-img">
-                  <img className="img-fluid" src="images/man1.jpg" alt="" />
-                </div>
-                <div className="contetn">
-                  <div className="info-text">
-                    <h3>
-                      <a href="#">Mohammed Omar</a>
-                    </h3>
-                    {/* <p>Lead Designer</p> */}
-                  </div>
-                  <p>
-                    "I've tried other matrimony services in the past, but Find
-                    Soulmate is by far the best. The app is user-friendly and
-                    the chat and messaging features make it easy to get to know
-                    potential matches. I also appreciate the safety and
-                    verification features - it's important to me to know that
-                    I'm communicating with real people. Thanks Find Soulmate!"{" "}
-                  </p>
-                  {/* <ul className="social-icons">
-                  <li><a href="#"><i className="lni lni-facebook-filled" aria-hidden="true" /></a></li>
-                  <li><a href="#"><i className="lni lni-twitter-filled" aria-hidden="true" /></a></li>
-                  <li><a href="#"><i className="lni lni-instagram-filled" aria-hidden="true" /></a></li>
-                </ul> */}
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-6 col-md-12 col-xs-12">
-              <div className="team-item wow fadeInRight" data-wow-delay="0.8s">
-                <div className="team-img">
-                  <img className="img-fluid" src="images/girl1.jpg" alt="" />
-                </div>
-                <div className="contetn">
-                  <div className="info-text">
-                    <h3>
-                      <a href="#">Fathima Aisha</a>
-                    </h3>
-                    {/* <p>Lead Designer</p> */}
-                  </div>
-                  <p>
-                    "As a busy professional, I don't have a lot of time to
-                    devote to dating. That's why I love Find Soulmate - the app
-                    makes it easy to find and connect with potential matches,
-                    even when I'm on the go. I've already met a few great people
-                    and I'm excited to see where things go."
+                    As a divorced mom with my kid, finding love felt tough. Find
+                    Soulmate changed that. I met great people, app's easy, and
+                    filters helped. It's a blessing for Muslims, uniting us. Big
+                    thanks to creators, you made my prayers real. Recommending
+                    to single parents for real companionship. Find Soulmate,
+                    you're a dream come true
                   </p>
                   {/* <ul className="social-icons">
                   <li><a href="#"><i className="lni lni-facebook-filled" aria-hidden="true" /></a></li>
@@ -441,9 +583,82 @@ const Body = () => {
               </div>
             </div>
           </div>
+          <Grid container spacing={1}>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={6}
+              className="team-item"
+              data-wow-delay="0.6s"
+            >
+              <img className="team-img" src="images/man1.jpg" alt="" />
+
+              <Grid item xs={12} className="content">
+                <div className="info-text">
+                  <h3>
+                    <a href="#">Mohammed Omar</a>
+                  </h3>
+                  {/* <p>Lead Designer</p> */}
+                </div>
+                <p>
+                  "I've tried other matrimony services in the past, but Find
+                  Soulmate is by far the best. The app is user-friendly and the
+                  chat and messaging features make it easy to get to know
+                  potential matches. I also appreciate the safety and
+                  verification features - it's important to me to know that I'm
+                  communicating with real people. Thanks Find Soulmate!"{" "}
+                </p>
+                {/* <ul className="social-icons">
+                  <li><a href="#"><i className="lni lni-facebook-filled" aria-hidden="true" /></a></li>
+                  <li><a href="#"><i className="lni lni-twitter-filled" aria-hidden="true" /></a></li>
+                  <li><a href="#"><i className="lni lni-instagram-filled" aria-hidden="true" /></a></li>
+                </ul> */}
+              </Grid>
+            </Grid>
+
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={6}
+              className="team-item  "
+              data-wow-delay="0.8s"
+            >
+              <img
+                className="team-img"
+                src="https://www.fibhaber.com/images/upload/DSC_0055.jpg"
+                alt=""
+              />
+
+              <div className="content">
+                <div className="info-text">
+                  <h3>
+                    <a href="#">Fathima Aisha</a>
+                  </h3>
+                  {/* <p>Lead Designer</p> */}
+                </div>
+                <p>
+                  "As a busy principal, time is scarce for partner searching.
+                  Find Soulmate simplifies it, even on the go. After losing my
+                  husband to COVID-19, life changed. Find Soulmate gave hope in
+                  this new phase. Balancing widowhood
+                  and being a principal is tough, but Find Soulmate brings
+                  positivity. It lets me explore companionship again. Excited to
+                  see where these connections lead. Find Soulmate smooths this
+                  path, offering happiness once more."
+                </p>
+                {/* <ul className="social-icons">
+                  <li><a href="#"><i className="lni lni-facebook-filled" aria-hidden="true" /></a></li>
+                  <li><a href="#"><i className="lni lni-twitter-filled" aria-hidden="true" /></a></li>
+                  <li><a href="#"><i className="lni lni-instagram-filled" aria-hidden="true" /></a></li>
+                </ul> */}
+              </div>
+            </Grid>
+          </Grid>
         </div>
       </section>
-      <section id="pricing" className="section-padding">
+      <section style={{display:'none'}} id="pricing" className="section-padding">
         <div className="container">
           <div className="section-header text-center">
             <h2 className="section-title wow fadeInDown" data-wow-delay="0.3s">
@@ -492,7 +707,7 @@ const Body = () => {
                   <h3>Plus</h3>
                 </div>
                 <ul className="description">
-                <li>10 proposals free</li>
+                  <li>10 proposals free</li>
                   <li>3 Month Membership</li>
                   <li>Email support</li>
                   <li>Lifetime updates</li>
@@ -514,7 +729,7 @@ const Body = () => {
                   <h3>Premium</h3>
                 </div>
                 <ul className="description">
-                <li>10 proposals free</li>
+                  <li>10 proposals free</li>
                   <li>1 Year Membership</li>
                   <li>Email support</li>
                   <li>Lifetime updates</li>
@@ -526,110 +741,16 @@ const Body = () => {
         </div>
       </section>
       <section id="testimonial" className="testimonial section-padding">
-        <div className="container">
-          <div className="row justify-content-center">
-            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-              <div
-                id="testimonials"
-                className="owl-carousel wow fadeInUp"
-                data-wow-delay="1.2s"
-              >
-                <div className="item">
-                  <div className="testimonial-item">
-                    <div className="img-thumb">
-                      <img src="images/jcwSRgPeiitd.jpg" alt=""  />
-                    </div>
-                    <div className="info">
-                      <h2>
-                        <a href="#">David Smith</a>
-                      </h2>
-                      <h3>
-                        <a href="#">Creative Head</a>
-                      </h3>
-                    </div>
-                    <div className="content">
-                      <p className="description">
-                        Praesent cursus nulla non arcu tempor, ut egestas elit
-                        tempus. In ac ex fermentum, gravida felis nec, tincidunt
-                        ligula.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="item">
-                  <div className="testimonial-item">
-                    <div className="img-thumb">
-                      <img src="images/ve7u8xPysbPl.jpg" alt="" />
-                    </div>
-                    <div className="info">
-                      <h2>
-                        <a href="#">Domeni GEsson</a>
-                      </h2>
-                      <h3>
-                        <a href="#">Awesome Technology co.</a>
-                      </h3>
-                    </div>
-                    <div className="content">
-                      <p className="description">
-                        Praesent cursus nulla non arcu tempor, ut egestas elit
-                        tempus. In ac ex fermentum, gravida felis nec, tincidunt
-                        ligula.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="item">
-                  <div className="testimonial-item">
-                    <div className="img-thumb">
-                      <img src="images/NdMhpdAJn5g1.jpg" alt="" />
-                    </div>
-                    <div className="info">
-                      <h2>
-                        <a href="#">Dommini Albert</a>
-                      </h2>
-                      <h3>
-                        <a href="#">Nesnal Design co.</a>
-                      </h3>
-                    </div>
-                    <div className="content">
-                      <p className="description">
-                        Praesent cursus nulla non arcu tempor, ut egestas elit
-                        tempus. In ac ex fermentum, gravida felis nec, tincidunt
-                        ligula.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="item">
-                  <div className="testimonial-item">
-                    <div className="img-thumb">
-                      <img src="images/WZLgPJzNUeb7.jpg" alt="" />
-                    </div>
-                    <div className="info">
-                      <h2>
-                        <a href="#">Fernanda Anaya</a>
-                      </h2>
-                      <h3>
-                        <a href="#">Developer</a>
-                      </h3>
-                    </div>
-                    <div className="content">
-                      <p className="description">
-                        Praesent cursus nulla non arcu tempor, ut egestas elit
-                        tempus. In ac ex fermentum, gravida felis nec, tincidunt
-                        ligula.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div className="container"></div>
       </section>
 
       <div
-        style={{ display: "flex", justifyContent: "center" }}
+        ref={containerRef}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          overflow: "scroll",
+        }}
         className="testimonial "
       >
         <img src={img1} style={{ width: 200, padding: 15 }}></img>
@@ -639,23 +760,27 @@ const Body = () => {
         <img src={img5} style={{ width: 200, padding: 15 }}></img>
         <img src={img6} style={{ width: 200, padding: 15 }}></img>
       </div>
-      <section id="cta" className="section-padding">
+      <section id="download" className="section-padding">
         <div className="container">
           <div className="row">
             <div
-              className="col-lg-6 col-md-6 col-xs-6 wow fadeInLeft"
+              className="col-lg-12 col-md-12 col-xs-12 wow fadeInLeft"
               data-wow-delay="0.3s"
             >
               <div className="cta-text">
-                <h4>Get 30 days free trial</h4>
+                <h4>Get 100 days free trial</h4>
                 <p>
-                  Upgrade to our 30-day premium subscription and enjoy exclusive
-                  features to take your search for love to the next level. With
-                  our premium subscription, you'll get access to advanced search
-                  filters that allow you to narrow down your search and find
-                  compatible matches faster. You'll also be able to see who has
-                  viewed your profile and liked your photos, so you can connect
-                  with potential matches who are interested in you.
+                  Elevate your experience by opting for our 100-day premium
+                  subscription, which offers an array of exclusive features
+                  designed to elevate your quest for companionship. Through our
+                  premium subscription, you will gain entry to a spectrum of
+                  advanced search filters that streamline your search process,
+                  facilitating the discovery of compatible matches at an
+                  accelerated pace. Moreover, you will gain the privilege to
+                  track those who have engaged with your profile and exhibited
+                  interest in your photos, empowering you to forge meaningful
+                  connections with potential matches who share a genuine
+                  enthusiasm for connecting
                 </p>
               </div>
 
@@ -670,21 +795,27 @@ const Body = () => {
                 trigger={trigerStatus}
                 popupClose={() => {
                   setTrigerStatus(false);
+                  if (registerError) {
+                    //clear msg
+                    dispatch(removeError());
+                  }
                 }}
               >
                 {/* <h1>Fill This Form </h1> */}
-                <Register />
+                <Register stepChanged={ScrollUp} modelClosed={() => setTrigerStatus(false)} />
               </Popup>
             </div>
 
-            <div
-              className="col-lg-6 col-md-6 col-xs-6 text-right"
-              data-wow-delay="0.3s"
-            >
+            <div className="download-container">
               <h3>Download Our App</h3>
-              <p>Download App for Android and ios mobile phone.</p>
-              <img src={playstore} style={{ width: 200, marginRight: 15 }} />
-              <img src={appstore} style={{ width: 200, margin: 0 }} />
+              <p>
+                Experience the Full Potential: Access Our App on Android and iOS
+                Devices
+              </p>
+              <div className="download-buttons">
+                <img src={playstore} />
+                <img src={appstore} />
+              </div>
             </div>
           </div>
         </div>
@@ -701,9 +832,16 @@ const Body = () => {
             className="row contact-form-area wow fadeInUp"
             data-wow-delay="0.3s"
           >
-            <div className="col-lg-7 col-md-12 col-sm-12">
+            <div
+              style={{ marginBottom: 20 }}
+              className="col-lg-7 col-md-12 col-sm-12"
+            >
               <div className="contact-block">
-                <form id="contactForm">
+                <form
+                  id="contactForm"
+                  action="https://formspree.io/f/mrgwzrnd"
+                  method="POST"
+                >
                   <div className="row">
                     <div className="col-md-6">
                       <div className="form-group">
@@ -739,6 +877,7 @@ const Body = () => {
                           type="text"
                           placeholder="Subject"
                           id="msg_subject"
+                          name="msg_subject"
                           className="form-control"
                           required
                           data-error="Please enter your subject"
@@ -751,6 +890,7 @@ const Body = () => {
                         <textarea
                           className="form-control"
                           id="message"
+                          name="message"
                           placeholder="Your Message"
                           rows={7}
                           data-error="Write your message"
@@ -790,4 +930,3 @@ const Body = () => {
   );
 };
 export default Body;
-

@@ -1,6 +1,7 @@
 //Ducks pattern
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
+import API from "../../API";
 
 const initialState = {
   stepOne: {
@@ -13,7 +14,7 @@ const initialState = {
     townArea: "",
     bornPlace: "",
     gender: "Male",
-    dob: "",
+    dob: new Date(),
     nic: "",
     mobile: 0,
     email: "",
@@ -24,7 +25,7 @@ const initialState = {
     eyeColor: "black",
     marriageStatus: "un-married", // "un-married"
     occupation: "",
-    occupationCountry: "",
+    occupationCountry: "Sri Lanka",
     whatsapp: 0,
     aboutMe: "",
   },
@@ -34,7 +35,7 @@ const initialState = {
     whatsapp: 0,
     password: "",
     confirmPassword:"",
-    
+    isTermsChecked:false,
     profilePicture: null,
   },
   profilePicture: null,
@@ -64,6 +65,7 @@ const profileSlice = createSlice({
     removeError(state, { payload }) {
       state.errorMsg = "";
       state.registerError = false;
+      state.isSaved = false;
 
     },
     addStepTwo(state, { payload }) {
@@ -85,8 +87,10 @@ const profileSlice = createSlice({
       // Add user to the state array
       state.isSaved = false;
       state.registerError = true;
-
-      const msg = action.payload.error;
+ 
+      let msg = action?.payload?.error;
+      if(!msg)
+        msg = action?.error.message +", Please check your internet connection";
       console.log({msg})
       state.errorMsg = msg //"Profile not saved, Something went wrong"
     });
@@ -97,8 +101,8 @@ export const saveProfile = createAsyncThunk(
     "profileSlice/saveProfile",
     async (data, thunkAPI) => {
       try {
-        const response = await axios.post(
-          "http://localhost:8082/api/profiles/v2",
+        const response = await API.post(
+          "profiles/v2",
           data
         );
         return response.data;
@@ -123,6 +127,7 @@ export const {
   clearAll,
   addProfilePic,
   removeProfilePic,
+  removeError
 } = profileSlice.actions;
 
 export default profileSlice.reducer;

@@ -4,6 +4,8 @@ import { Typography, Box, Button } from '@material-ui/core';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import CloseIcon from '@material-ui/icons/Close';
 import { Error } from '@mui/icons-material';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeError } from '../../features/profile/Profile.slice';
 
 const useStyles = makeStyles((theme) => ({
   alert: {
@@ -35,12 +37,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AlertBox = ({ message, type="info" }) => {
+const AlertBox = ({ message, type="info", handleBack }) => {
   const classes = useStyles();
   const [isOpen, setIsOpen] = useState(true);
+  const { stepOne, isSaved, stepTwo , registerError , errorMsg , profilePicture} = useSelector((state) => state.profile);
+  const dispatch = useDispatch();
 
   const handleClose = () => {
     setIsOpen(false);
+   dispatch(removeError())
+
+   if(handleBack !== null) handleBack()
   };
 
   if (!isOpen) {

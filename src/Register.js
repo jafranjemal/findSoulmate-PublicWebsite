@@ -30,7 +30,12 @@ import {
 import { Summarize } from "@mui/icons-material";
 import Summary from "./Summary";
 import { useDispatch, useSelector } from "react-redux";
-import { addStepOne, clearAll, saveProfile } from "./features/profile/Profile.slice";
+import {
+  addStepOne,
+  clearAll,
+  removeError,
+  saveProfile,
+} from "./features/profile/Profile.slice";
 import AlertBox from "./components/Alert/AlertBox";
 import {
   provinceList,
@@ -41,6 +46,8 @@ import DropBoxWithColor from "./components/DropBox/DropBoxWithColor";
 import moment from "moment/moment";
 import { useTheme } from "@mui/material";
 import API from "./API";
+import { extractGenderAndDOB } from "./NicExtractor";
+import { CountryList } from "./assets/CountryList";
 
 const steps = ["Personal Details", "Profile Details", "Summary"];
 
@@ -70,10 +77,11 @@ const initialState = {
   aboutMe: "",
 };
 
-export default function Register() {
+export default function Register(props) {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set());
-  const { stepOne, isSaved, stepTwo , registerError , errorMsg , profilePicture} = useSelector((state) => state.profile);
+  const { stepOne, isSaved, stepTwo, registerError, errorMsg, profilePicture } =
+    useSelector((state) => state.profile);
 
   const [values, setValues] = useState(stepOne);
   const [dob, setDOB] = useState(stepOne.dob);
@@ -85,12 +93,28 @@ export default function Register() {
   const msg =
     "According to Sri Lankan law, the legal age of majority is 18 years. Please note that certain rights and responsibilities may be applicable only to individuals who have reached this age";
 
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
+  const [countryList, setCountryList] = useState([]);
 
-    const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  useEffect(() => {
+    ScrollToTopOnMount();
+    props.stepChanged();
+  }, [activeStep]);
 
-    
+  function ScrollToTopOnMount() {
+    window.scrollTo(0, 0); // Scroll to the top of the page
+    document.getElementById("popup").scrollIntoView();
+  }
+
+  useEffect(() => {
+    const formattedCountries = CountryList.map((country) => ({
+      value: country.name.common,
+      text: country.name.common,
+    })).sort((a, b) => a.value.localeCompare(b.value)); // Sorting in alphabetical order
+    setCountryList(formattedCountries);
+  }, []);
 
   useEffect(() => {
     if (values.province && values.province !== "") {
@@ -108,7 +132,7 @@ export default function Register() {
     if (values.province && values.province !== "") {
       const distr = getDistrictList(values.province).map((y) =>
         y.map((l) => ({
-          text: l,
+          text: capitalizeText(l),
           value: l,
         }))
       );
@@ -116,6 +140,24 @@ export default function Register() {
       setDistrictList(distr[0]);
     }
   }, [values.province]);
+
+  function capitalizeText(text) {
+    // Split the input text into words
+    const words = text.split(' ');
+  
+    // Capitalize the first character of each word
+    const capitalizedWords = words.map((word) => {
+      // Ensure the word is not an empty string
+      if (word) {
+        // Capitalize the first character and convert the rest to lowercase
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      }
+      return '';
+    });
+  
+    // Join the capitalized words back together
+    return capitalizedWords.join(' ');
+  }
 
   const dispatch = useDispatch();
 
@@ -148,11 +190,6 @@ export default function Register() {
 
     //final steps
     if (activeStep === 2) {
-
-      
-
-      
-
       if (!stepOne.fullName || stepOne.fullName === "")
         return alert("Full Name Cannot be empty, Please enter full name first");
       if (!stepOne.address || stepOne.address === "")
@@ -208,6 +245,18 @@ export default function Register() {
         return alert(
           "Marriage Status Cannot be empty, Please enter Marriage Status first"
         );
+
+      if (stepOne.gender === "Female" && stepOne.marriageStatus === "married") {
+        return alert(
+          "Marital Status cannot be set as 'Married' for females. Polygamy is only permissible for males. Kindly choose a different Marital Status."
+        );
+      }
+      if (stepOne.gender === "Female" && stepOne.marriageStatus === "widower") {
+        return alert(
+          "Marital Status cannot be set as 'widower' for females. Kindly choose a different Marital Status."
+        );
+      }
+
       if (!stepOne.aboutMe || stepOne.aboutMe === "")
         return alert("AboutMe Cannot be empty, Please enter AboutMe first");
 
@@ -220,82 +269,83 @@ export default function Register() {
         return alert("Mobile Cannot be empty, Please enter Mobile first");
       if (!stepTwo.whatsapp || stepTwo.whatsapp === "")
         return alert("Whatsapp Cannot be empty, Please enter Whatsapp first");
+      if (!stepTwo.isTermsChecked)
+        return alert("You must accept the terms and conditions.");
 
-        const email = stepTwo.email;
-        const mobile = stepTwo.mobile;
-        const whatsapp = stepTwo.whatsapp;
+      const email = stepTwo.email;
+      const mobile = stepTwo.mobile;
+      const whatsapp = stepTwo.whatsapp;
 
-       
-        let profilePicturesArray = [{
+      let profilePicturesArray = [
+        {
           profilePictureType: "Profile",
-          profilePicture :    "https://st2.depositphotos.com/2101611/9885/v/450/depositphotos_98850502-stock-illustration-man-silhouette-icon-with-question.jpg",
-        
-        }]
+          profilePicture:
+            "https://st2.depositphotos.com/2101611/9885/v/450/depositphotos_98850502-stock-illustration-man-silhouette-icon-with-question.jpg",
+        },
+      ];
 
-        if(profilePicture !==null){
-          const formData = new FormData();
-          formData.append('image', profilePicture);
-          await API.post('/uploadImage', formData ).then(x=> {
-  
-            profilePicturesArray =   [
-              {
-                profilePictureType: "Profile",
-                profilePicture: x.data
-              },
-            ];
-  
-          })
-        }
+      if (profilePicture !== null) {
+        const formData = new FormData();
+        formData.append("image", profilePicture);
+        await API.post("/uploadImage", formData).then((x) => {
+          profilePicturesArray = [
+            {
+              profilePictureType: "Profile",
+              profilePicture: x.data,
+            },
+          ];
+        });
+      }
 
-        const save_data =   {
-          fullName:stepOne.fullName,
-          address:stepOne.address,
-          country:stepOne.country,
-          province:stepOne.province,
-          district:stepOne.district,
-          city:stepOne.townArea,
-          townArea:stepOne.townArea,
-          bornPlace:stepOne.bornPlace,
-          dob:stepOne.dob,
-          gender:stepOne.gender,
-          nic:stepOne.nic,
-          age:stepOne.age,
-          complexion:stepOne.complexion,
-          weight:stepOne.weight,
-          height:stepOne.height,
-          hairColor:stepOne.hairColor,
-          eyeColor:stepOne.eyeColor,
-          marriageStatus:stepOne.marriageStatus,
-          occupation:stepOne.occupation,
-          occupationCountry:stepOne.occupationCountry,
+      const save_data = {
+        fullName: stepOne.fullName,
+        address: stepOne.address,
+        country: stepOne.country,
+        province: stepOne.province,
+        district: stepOne.district,
+        city: stepOne.townArea,
+        townArea: stepOne.townArea,
+        bornPlace: stepOne.bornPlace,
+        dob: stepOne.dob,
+        gender: stepOne.gender,
+        nic: stepOne.nic,
+        age: stepOne.age,
+        complexion: stepOne.complexion,
+        weight: stepOne.weight,
+        height: stepOne.height,
+        hairColor: stepOne.hairColor,
+        eyeColor: stepOne.eyeColor,
+        marriageStatus: stepOne.marriageStatus,
+        occupation: stepOne.occupation,
+        occupationCountry: stepOne.occupationCountry,
 
-          //step two
-          mobile:stepTwo.mobile,
-          email:stepTwo.email,
-          password:stepTwo.password,
-          whatsapp:stepTwo.whatsapp,
+        //step two
+        mobile: stepTwo.mobile,
+        email: stepTwo.email,
+        password: stepTwo.password,
+        whatsapp: stepTwo.whatsapp,
 
-          
-          //familyDetails:stepOne.familyDetails,
-         // educationDetails:stepOne.educationDetails,
-          profilePictures:profilePicturesArray,
-         // expectations:stepOne.expectations,
-         // providings:stepOne.providings,
-         // documentPictures:stepOne.documentPictures,
-         // dressCodes:stepOne.dressCodes,
-          //brokers:stepOne.brokers,
-          aboutMe:stepOne.aboutMe,
-          contactDetails: [{ mobile }, { email }],
-          socialMediaDetails: [{ whatsapp }],
-          isWeddingFixed :false,
-          profileActivation : true,
-        };
-        console.log({save_data})
-        dispatch(saveProfile(save_data))
+        //familyDetails:stepOne.familyDetails,
+        // educationDetails:stepOne.educationDetails,
+        profilePictures: profilePicturesArray,
+        // expectations:stepOne.expectations,
+        // providings:stepOne.providings,
+        // documentPictures:stepOne.documentPictures,
+        // dressCodes:stepOne.dressCodes,
+        //brokers:stepOne.brokers,
+        aboutMe: stepOne.aboutMe,
+        contactDetails: [{ mobile }, { email }],
+        socialMediaDetails: [{ whatsapp }],
+        isWeddingFixed: false,
+        profileActivation: true,
+      };
+      console.log({ save_data });
+      dispatch(saveProfile(save_data));
     }
 
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
     setSkipped(newSkipped);
+    window.scrollTo(0, 0);
   };
 
   const handleBack = () => {
@@ -317,55 +367,73 @@ export default function Register() {
 
   const handleReset = () => {
     setActiveStep(0);
-
     dispatch(clearAll());
   };
 
   const onChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, value);
+    console.log(name, value, value.length);
     setValues({
       ...values,
       [name]: value,
     });
+
+    if (name === "nic" && (value.length === 9 || value.length === 12)) {
+      const { dateOfBirth, gender } = extractGenderAndDOB(value);
+
+      if (dateOfBirth !== "") {
+        const _dob = new Date(dateOfBirth); //.toString();
+        setDOB(_dob);
+        setValues({
+          ...values,
+          [name]: value,
+          ["gender"]: gender,
+          ["dob"]: _dob.toISOString(),
+        });
+      }
+    }
   };
+
+  const onClose = ()=>{
+    handleReset()
+    dispatch(removeError());
+    props.modelClosed();
+  }
 
   if (isSaved) {
     return (
-      <AlertBox message="Successfully registered for Find Soulmate Matrimonial App! You can now use our mobile app using the provided credentials. The login details have been sent to your email address." />
+      <AlertBox
+        handleBack={onClose}
+        message="Successfully registered for Find Soulmate Matrimonial App! You can now use our mobile app using the provided credentials. The login details have been sent to your email address."
+      />
     );
   }
 
-  if(registerError){
-    return (
-      <AlertBox message={errorMsg} type="Error" />
-    );
+  if (registerError) {
+    return <AlertBox message={errorMsg} type="Error" handleBack={handleBack} />;
   }
-
- 
 
   return (
     <Box>
-      
       <Stepper
-        style={{ paddingRight: 60, paddingLeft: 60 }}
         activeStep={activeStep}
-        orientation={isSmallScreen ? 'vertical' : 'horizontal'}
+        orientation={isSmallScreen ? "vertical" : "horizontal"}
       >
         {steps.map((label, index) => {
           const stepProps = {};
           const labelProps = {
             style: {
-              backgroundImage: "linear-gradient(136deg, rgb(242, 113, 33) 0%, rgb(233, 64, 87) 50%, rgb(138, 35, 135) 100%)",
+              backgroundImage:
+                "linear-gradient(136deg, rgb(242, 113, 33) 0%, rgb(233, 64, 87) 50%, rgb(138, 35, 135) 100%)",
               boxShadow: "0 4px 10px 0 rgba(0, 0, 0, .25)",
-              borderRadius:20,
-              padding:20,
-              minHeight:50,
-              minWidth:150,
-              color:'white'
+              borderRadius: 20,
+              padding: 20,
+              minHeight: 50,
+              minWidth: 150,
+              color: "white",
             },
           };
-          
+
           // if (isStepOptional(index)) {
           //   labelProps.optional = (
           //     <Typography variant="caption">Optional</Typography>
@@ -391,9 +459,13 @@ export default function Register() {
           return (
             <Step key={label} {...stepProps}>
               <StepLabel icon={icon} {...labelProps}>
-              <Typography component={'span'} variant={isSmallScreen ? 'body2' : 'body1'}>
-          {label}
-        </Typography>
+                <Typography
+                  color={"white"}
+                  component={"span"}
+                  variant={isSmallScreen ? "body2" : "body1"}
+                >
+                  {label}
+                </Typography>
               </StepLabel>
             </Step>
           );
@@ -401,17 +473,22 @@ export default function Register() {
       </Stepper>
       {activeStep === steps.length && !isSaved ? (
         <React.Fragment>
-           <div style={{
-            display:'flex',
-            flexDirection:'column',
-            justifyContent:'center',
-            width:'100%',
-            alignItems:'center',
-            padding:120
-           }}>
-            <img src="https://icon-library.com/images/progress-icon-gif/progress-icon-gif-9.jpg" width={60}/>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              width: "100%",
+              alignItems: "center",
+              padding: 120,
+            }}
+          >
+            <img
+              src="https://icon-library.com/images/progress-icon-gif/progress-icon-gif-9.jpg"
+              width={60}
+            />
             <p>please wait...</p>
-           </div>
+          </div>
           <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
             <Box sx={{ flex: "1 1 auto" }} />
             <Button onClick={handleReset}>Reset</Button>
@@ -423,7 +500,7 @@ export default function Register() {
 
           {activeStep === 0 && (
             <Box sx={{ mt: 2 }}>
-              <Grid   container spacing={2}>
+              <Grid container spacing={2}>
                 <Grid item xs={12} sm={12} md={6}>
                   <TextField
                     label="Full Name"
@@ -496,6 +573,7 @@ export default function Register() {
                     label="NIC"
                     onChange={onChange}
                     name="nic"
+                    type="number"
                     value={values.nic}
                     fullWidth
                     required
@@ -503,6 +581,7 @@ export default function Register() {
                 </Grid>
                 <Grid item xs={12} sm={12} md={3}>
                   <DropBox
+                    readOnly={true}
                     labelText={"Gender"}
                     onChange={onChange}
                     name="gender"
@@ -516,6 +595,7 @@ export default function Register() {
                 <Grid item xs={12} sm={12} md={3}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
+                      readOnly
                       format="DD/MM/YYYY"
                       label="Date of birth"
                       value={dayjs(values.dob)}
@@ -539,13 +619,12 @@ export default function Register() {
                   />
                 </Grid>
                 <Grid item xs={12} sm={12} md={3}>
-                  <TextField
-                    label="Occupation Country"
+                  <DropBox
+                    labelText="Occupation Country"
                     onChange={onChange}
                     name="occupationCountry"
                     value={values.occupationCountry}
-                    fullWidth
-                    required
+                    items={countryList}
                   />
                 </Grid>
 
@@ -604,6 +683,7 @@ export default function Register() {
                   <TextField
                     label="Height in (cm)"
                     onChange={onChange}
+                    onFocus={(e) => e.target.select()}
                     name="height"
                     type="number"
                     value={values.height}
@@ -615,6 +695,7 @@ export default function Register() {
                   <TextField
                     label="Weight in (kg)"
                     onChange={onChange}
+                    onFocus={(e) => e.target.select()}
                     name="weight"
                     type="number"
                     value={values.weight}
@@ -629,9 +710,11 @@ export default function Register() {
                     name="marriageStatus"
                     value={values.marriageStatus}
                     items={[
-                      { text: "Un-Married", value: "un-married" },
+                      { text: " Un-Married", value: "un-married" },
                       { text: "	Married", value: "married" },
                       { text: "	Divorced", value: "divorce" },
+                      { text: "	Widower (male)", value: "widower" },
+                      { text: "	Widow (female)", value: "widow" },
                     ]}
                   />
                 </Grid>
@@ -661,31 +744,30 @@ export default function Register() {
           </div>
           <div
             style={{
-              position: "absolute",
               bottom: 10,
               display: "flex",
               flexDirection: "row",
               backgroundColor: "white",
-              boxShadow: "0 4px 10px 0 rgba(0,0,0,.25)",
+              paddingBottom: 50,
               margin: "10px",
               right: 60,
             }}
           >
+            <Box sx={{ flex: "1 1 auto" }} />
             <Button
               color="primary"
               disabled={activeStep === 0}
               onClick={handleBack}
-              sx={{ mr: 1 }}
+              sx={{ mr: 1, boxShadow: "0 4px 10px 0 rgba(0,0,0,.25)" }}
             >
               Back
             </Button>
-            <Box sx={{ flex: "1 1 auto" }} />
-            {/* {isStepOptional(activeStep) && (
-              <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
-                Skip
-              </Button>
-            )} */}
 
+            {/* {isStepOptional(activeStep) && (
+    <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
+      Skip
+    </Button>
+  )} */}
             <Button variant="contained" color="error" onClick={handleNext}>
               {activeStep === steps.length - 1 ? "Finish" : "Next"}
             </Button>

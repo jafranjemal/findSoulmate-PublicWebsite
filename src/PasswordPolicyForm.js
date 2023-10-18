@@ -25,6 +25,20 @@ import {
 import { CircleNotificationsTwoTone } from "@mui/icons-material";
 import { addProfilePic, addStepTwo } from "./features/profile/Profile.slice";
 import { useDispatch, useSelector } from "react-redux";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import TermsAndConditions from "./TermsAndConditions";
+import Popup from "./components/Popup";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
+import { Link } from "@mui/material";
+import PhotoUploadDescription from "./PhotoUploadDescription";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/material.css";
+import { startsWith } from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
@@ -62,32 +76,45 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 const initialState = {
-   
   mobile: 0,
-  email: "",   
+  email: "",
   whatsapp: 0,
-  password:"",
-  profilePicture:null
-   
+  password: "",
+  profilePicture: null,
 };
-const PasswordPolicyForm = ( ) => {
+
+const PasswordPolicyForm = () => {
   const classes = useStyles();
-  const { stepOne, isSaved, stepTwo , profilePicture } = useSelector((state) => state.profile);
+  const { stepOne, isSaved, stepTwo, profilePicture } = useSelector(
+    (state) => state.profile
+  );
 
   const [values, setValues] = useState(stepTwo);
 
   const [password, setPassword] = useState(stepTwo.password);
-  const [confirmPassword, setConfirmPassword] = useState(stepTwo.confirmPassword);
+  const [confirmPassword, setConfirmPassword] = useState(
+    stepTwo.confirmPassword
+  );
   const [showPassword, setShowPassword] = useState(false);
   const [isUppercase, setIsUppercase] = useState(false);
   const [isNumber, setIsNumber] = useState(false);
   const [isMinimum8Digits, setIsMinimum8Digits] = useState(false);
   const [photo, setPhoto] = useState(profilePicture);
+  const [isTermsChecked, setIsTermsChecked] = useState(false);
+  const [isOpenPopup, setIsOpenPopup] = useState(false);
 
+  const handleTermsChange = (event) => {
+    setIsTermsChecked(event.target.checked);
+    setIsOpenPopup(false);
+  };
+
+  const handleTermsLabelClick = () => {
+    setIsOpenPopup(true);
+  };
   const dispatch = useDispatch();
 
   function trimValue(value) {
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       return value.trim();
     }
     return value;
@@ -144,7 +171,6 @@ const PasswordPolicyForm = ( ) => {
     return "yellow";
   };
 
-
   const handlePhotoChange = (e) => {
     setPhoto(e.target.files[0]);
   };
@@ -153,15 +179,19 @@ const PasswordPolicyForm = ( ) => {
     setPhoto(null);
   };
 
-  useEffect(()=>{
+  useEffect(() => {
+    const data = {
+      ...values,
+      password,
+      confirmPassword,
+      isConfirmPasswordValid: isConfirmPasswordValid(),
+      isTermsChecked,
+    };
+    console.log({ data });
 
-    const data = {...values,   password , confirmPassword , isConfirmPasswordValid: isConfirmPasswordValid()}
-    console.log({data})
-
-    dispatch(addStepTwo(data))
-    dispatch(addProfilePic(photo))
-    
-  },[values , password , photo, confirmPassword])
+    dispatch(addStepTwo(data));
+    dispatch(addProfilePic(photo));
+  }, [values, password, photo, confirmPassword, isTermsChecked]);
 
   return (
     <div className={classes.formContainer}>
@@ -199,11 +229,13 @@ const PasswordPolicyForm = ( ) => {
                 <FormHelperText component="span">Remove photo</FormHelperText>
               </div>
             )}
+
+            <PhotoUploadDescription />
           </div>
         </Grid>
 
         <Grid item xs={12} sm={12} md={3}>
-          <TextField
+          {/* <TextField
             id="outlined-basic"
             label="Mobile"
             variant="outlined"
@@ -211,13 +243,43 @@ const PasswordPolicyForm = ( ) => {
             onChange={onChange}
             name="mobile"
             type="number"
-            
             fullWidth
             required
+          /> */}
+
+          <PhoneInput
+            inputProps={{
+              style: {
+                height: 60,
+                width: "100%", // Customize the height of the input
+                // Add more custom styles as needed
+              },
+            }}
+            countryCodeEditable={false}
+            specialLabel="Mobile Number"
+            placeholder="Enter number with country code (e.g., +94771234567) and enter mobile number without Zero (e.g., 777123456)"
+            autocompleteSearch={false}
+            defaultMask="(..) ..-..-..."
+            enableSearch={false}
+            preferredCountries={["lk","sa","qa","ae", "kw","us"]}
+            country={"lk"}
+            masks={{ lk: "(..) ..-..-..." }}
+            value={values.mobile}
+            onChange={(value, country, event) => {
+              // Remove leading '0' and set the state
+              const formattedNumb = value.startsWith("940")
+                ? value.replace("940", "94")
+                : value;
+              console.log(formattedNumb);
+              setValues({
+                ...values,
+                mobile: formattedNumb,
+              });
+            }}
           />
         </Grid>
         <Grid item xs={12} sm={12} md={3}>
-          <TextField
+          {/* <TextField
             id="outlined-basic"
             label="WhatsApp Number"
             variant="outlined"
@@ -225,9 +287,40 @@ const PasswordPolicyForm = ( ) => {
             onChange={onChange}
             name="whatsapp"
             type="number"
-
             fullWidth
             required
+          /> */}
+
+          
+<PhoneInput
+            inputProps={{
+              style: {
+                height: 60,
+                width: "100%", // Customize the height of the input
+                // Add more custom styles as needed
+              },
+            }}
+            countryCodeEditable={false}
+            specialLabel="Whatsapp Number"
+            placeholder="Enter number with country code (e.g., +94771234567) and enter mobile number without Zero (e.g., 777123456)"
+            autocompleteSearch={false}
+            defaultMask="(..) ..-..-..."
+            enableSearch={false}
+            preferredCountries={["lk","sa","qa","ae", "kw","us"]}
+            country={"lk"}
+            masks={{ lk: "(..) ..-..-..." }}
+            value={values.whatsapp}
+            onChange={(value, country, event) => {
+              // Remove leading '0' and set the state
+              const formattedNumb = value.startsWith("940")
+                ? value.replace("940", "94")
+                : value;
+              console.log(formattedNumb);
+              setValues({
+                ...values,
+                whatsapp: formattedNumb,
+              });
+            }}
           />
         </Grid>
         <Grid item xs={12} sm={12} md={6}>
@@ -267,30 +360,32 @@ const PasswordPolicyForm = ( ) => {
                 ),
               }}
             />
-            <FormHelperText className={classes.passwordRequirements}>
-              {getPasswordRequirementsStatus().map((requirement, index) => (
-                <Box
-                  key={index}
-                  display="flex"
-                  alignItems="center"
-                  color={requirement.isSatisfied ? "green" : "red"}
-                  style={{
-                    textDecoration: requirement.isSatisfied
-                      ? " line-through"
-                      : "none",
-                  }}
-                >
-                  {requirement.isSatisfied ? (
-                    <CheckCircle
-                      style={{ marginRight: "4px", color: "green" }}
-                    />
-                  ) : (
-                    <Cancel style={{ marginRight: "4px", color: "red" }} />
-                  )}
-                  {requirement.label}
-                </Box>
-              ))}
-            </FormHelperText>
+            {!isConfirmPasswordValid() && (
+              <FormHelperText className={classes.passwordRequirements}>
+                {getPasswordRequirementsStatus().map((requirement, index) => (
+                  <Box
+                    key={index}
+                    display="flex"
+                    alignItems="center"
+                    color={requirement.isSatisfied ? "green" : "red"}
+                    style={{
+                      textDecoration: requirement.isSatisfied
+                        ? " line-through"
+                        : "none",
+                    }}
+                  >
+                    {requirement.isSatisfied ? (
+                      <CheckCircle
+                        style={{ marginRight: "4px", color: "green" }}
+                      />
+                    ) : (
+                      <Cancel style={{ marginRight: "4px", color: "red" }} />
+                    )}
+                    {requirement.label}
+                  </Box>
+                ))}
+              </FormHelperText>
+            )}
           </FormControl>
         </Grid>
 
@@ -332,6 +427,45 @@ const PasswordPolicyForm = ( ) => {
           style={{ color: getPasswordStrengthColor() }}
         ></Typography>
       </Box>
+
+      <Grid item xs={12}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              style={{
+                marginLeft: 10,
+              }}
+              checked={isTermsChecked}
+              onChange={handleTermsChange}
+              name="termsCheck"
+              color="primary"
+              onClick={(event) => event.stopPropagation()}
+            />
+          }
+          label={
+            <Typography className="left-align" variant="body1">
+              I accept the{" "}
+              <Link
+                component="button"
+                variant="body1"
+                onClick={handleTermsLabelClick}
+              >
+                terms and conditions
+              </Link>
+            </Typography>
+          }
+        />
+
+        <Dialog open={isOpenPopup} onClose={() => setIsOpenPopup(false)}>
+          <DialogTitle>Terms and Conditions</DialogTitle>
+          <DialogContent>
+            <TermsAndConditions />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setIsOpenPopup(false)}>Close</Button>
+          </DialogActions>
+        </Dialog>
+      </Grid>
     </div>
   );
 };
