@@ -48,6 +48,7 @@ import { useTheme } from "@mui/material";
 import API from "./API";
 import { extractGenderAndDOB } from "./NicExtractor";
 import { CountryList } from "./assets/CountryList";
+import { doesSectionFormatHaveLeadingZeros } from "@mui/x-date-pickers/internals/hooks/useField/useField.utils";
 
 const steps = ["Personal Details", "Profile Details", "Summary"];
 
@@ -97,11 +98,12 @@ export default function Register(props) {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [countryList, setCountryList] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     ScrollToTopOnMount();
     props.stepChanged();
-  }, [activeStep]);
+  }, [activeStep, props]);
 
   function ScrollToTopOnMount() {
     window.scrollTo(0, 0); // Scroll to the top of the page
@@ -284,6 +286,8 @@ export default function Register(props) {
         },
       ];
 
+      setLoading(true)
+
       if (profilePicture !== null) {
         const formData = new FormData();
         formData.append("image", profilePicture);
@@ -341,6 +345,8 @@ export default function Register(props) {
       };
       console.log({ save_data });
       dispatch(saveProfile(save_data));
+
+      setLoading(false)
     }
 
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -768,8 +774,8 @@ export default function Register(props) {
       Skip
     </Button>
   )} */}
-            <Button variant="contained" color="error" onClick={handleNext}>
-              {activeStep === steps.length - 1 ? "Finish" : "Next"}
+            <Button variant="contained" color="error" disabled={loading} onClick={handleNext}>
+              {activeStep === steps.length - 1 ? loading ? "Submitting...":"Finish" : "Next"}
             </Button>
           </div>
         </React.Fragment>
