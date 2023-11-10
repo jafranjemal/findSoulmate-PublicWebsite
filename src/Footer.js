@@ -48,22 +48,23 @@ export default class Footer extends Component {
                     <div className="social-icon">
                       <a
                         className="facebook"
-                        href="https://web.facebook.com/jjsoftGlobal/?_rdc=1&_rdr"
+                        href="https://www.facebook.com/findsoulmate.lk"
                       >
                         <i className="lni lni-facebook-filled" />
                       </a>
-                      <a className="twitter" href="#">
-                        <i className="lni lni-twitter-filled" />
+                      <a className="instagram" href="https://www.youtube.com/@findsoulmate-lk">
+                        
+                        <i className="lni lni-youtube"></i>
                       </a>
-                      <a className="instagram" href="#">
+                      <a className="instagram" href="https://www.instagram.com/findsoulmate.lk">
                         <i className="lni lni-instagram-filled" />
                       </a>
-                      <a
+                      {/* <a
                         className="linkedin"
                         href="https://www.linkedin.com/in/jafran-jemal/"
                       >
                         <i className="lni lni-linkedin-original" />
-                      </a>
+                      </a> */}
                     </div>
                   </div>
                 </div>
@@ -167,7 +168,7 @@ export default class Footer extends Component {
                     <li>
                       <div className="founder-container">
                         <div className="founder-box">
-                          <img className="founder-img" src="mirzook.jpg" />
+                          <img className="founder-img" alt={"mirzook.jpg"}  src="mirzook.jpg" />
                           <div className="founder-title">
                             <h1>Mr.Mirzook Faleel</h1>
                             <h5>Founder,Director,and Secretary</h5>
@@ -175,7 +176,7 @@ export default class Footer extends Component {
                         </div>
 
                         <div className="founder-box">
-                          <img className="founder-img" src="jafran.jpg" />
+                          <img className="founder-img" alt="jafranjemal" src="jafran.jpg" />
                           <div className="founder-title">
                             <h1>Mr.Jafran Jemal</h1>
                             <h5>Co-Founder and Director</h5>
@@ -183,7 +184,7 @@ export default class Footer extends Component {
                         </div>
 
                         <div className="founder-box">
-                          <img className="founder-img" src="riyasi.jpeg" />
+                          <img className="founder-img" alt="riyasi" src="riyasi.jpeg" />
                           <div className="founder-title">
                             <h1>Mr.Riyasi Mousoon</h1>
                             <h5>Director</h5>

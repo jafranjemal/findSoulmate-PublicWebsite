@@ -480,7 +480,7 @@ Islahi | B.A. | Psychological Counselor | Al-Quran & Science Researcher | IHRDP 
                     </ListItemIcon>
                     <ListItemText
                       primary="Date: "
-                      secondary="October 16th, 2023"
+                      secondary="January 16th, 2024"
                     />
                   </ListItem>
                   <ListItem>
@@ -555,6 +555,7 @@ Islahi | B.A. | Psychological Counselor | Al-Quran & Science Researcher | IHRDP 
             <div className="col-lg-6 col-md-12 col-xs-12">
               <div className="team-item wow fadeInRight" data-wow-delay="0.4s">
                 <img
+                alt="as"
                   className="team-img"
                   src="https://c.files.bbci.co.uk/C333/production/_115517994_naziapic.jpg"
                 />
@@ -562,7 +563,7 @@ Islahi | B.A. | Psychological Counselor | Al-Quran & Science Researcher | IHRDP 
                 <div className="content">
                   <div className="info-text">
                     <h3>
-                      <a href="#">Fathima Sarah</a>
+                      <a href="#">Nadha Mariyam  </a>
                     </h3>
                     {/* <p>Product Designer</p> */}
                   </div>
@@ -634,7 +635,7 @@ Islahi | B.A. | Psychological Counselor | Al-Quran & Science Researcher | IHRDP 
               <div className="content">
                 <div className="info-text">
                   <h3>
-                    <a href="#">Fathima Aisha</a>
+                    <a href="#">Fathima Sithi Fowsiya</a>
                   </h3>
                   {/* <p>Lead Designer</p> */}
                 </div>
@@ -642,11 +643,11 @@ Islahi | B.A. | Psychological Counselor | Al-Quran & Science Researcher | IHRDP 
                   "As a busy principal, time is scarce for partner searching.
                   Find Soulmate simplifies it, even on the go. After losing my
                   husband to COVID-19, life changed. Find Soulmate gave hope in
-                  this new phase. Balancing widowhood
-                  and being a principal is tough, but Find Soulmate brings
-                  positivity. It lets me explore companionship again. Excited to
-                  see where these connections lead. Find Soulmate smooths this
-                  path, offering happiness once more."
+                  this new phase. Balancing widowhood and being a principal is
+                  tough, but Find Soulmate brings positivity. It lets me explore
+                  companionship again. Excited to see where these connections
+                  lead. Find Soulmate smooths this path, offering happiness once
+                  more."
                 </p>
                 {/* <ul className="social-icons">
                   <li><a href="#"><i className="lni lni-facebook-filled" aria-hidden="true" /></a></li>
@@ -658,7 +659,11 @@ Islahi | B.A. | Psychological Counselor | Al-Quran & Science Researcher | IHRDP 
           </Grid>
         </div>
       </section>
-      <section style={{display:'none'}} id="pricing" className="section-padding">
+      <section
+        style={{ display: "none" }}
+        id="pricing"
+        className="section-padding"
+      >
         <div className="container">
           <div className="section-header text-center">
             <h2 className="section-title wow fadeInDown" data-wow-delay="0.3s">
@@ -753,12 +758,12 @@ Islahi | B.A. | Psychological Counselor | Al-Quran & Science Researcher | IHRDP 
         }}
         className="testimonial "
       >
-        <img src={img1} style={{ width: 200, padding: 15 }}></img>
-        <img src={img2} style={{ width: 200, padding: 15 }}></img>
-        <img src={img3} style={{ width: 200, padding: 15 }}></img>
-        <img src={img4} style={{ width: 200, padding: 15 }}></img>
-        <img src={img5} style={{ width: 200, padding: 15 }}></img>
-        <img src={img6} style={{ width: 200, padding: 15 }}></img>
+        <img alt="" src={img1} style={{ width: 200, padding: 15 }}></img>
+        <img alt="" src={img2} style={{ width: 200, padding: 15 }}></img>
+        <img alt="" src={img3} style={{ width: 200, padding: 15 }}></img>
+        <img alt="" src={img4} style={{ width: 200, padding: 15 }}></img>
+        <img alt="" src={img5} style={{ width: 200, padding: 15 }}></img>
+        <img alt="" src={img6} style={{ width: 200, padding: 15 }}></img>
       </div>
       <section id="download" className="section-padding">
         <div className="container">
@@ -802,7 +807,10 @@ Islahi | B.A. | Psychological Counselor | Al-Quran & Science Researcher | IHRDP 
                 }}
               >
                 {/* <h1>Fill This Form </h1> */}
-                <Register stepChanged={ScrollUp} modelClosed={() => setTrigerStatus(false)} />
+                <Register
+                  stepChanged={ScrollUp}
+                  modelClosed={() => setTrigerStatus(false)}
+                />
               </Popup>
             </div>
 
@@ -812,9 +820,27 @@ Islahi | B.A. | Psychological Counselor | Al-Quran & Science Researcher | IHRDP 
                 Experience the Full Potential: Access Our App on Android and iOS
                 Devices
               </p>
-              <div className="download-buttons">
-                <img src={playstore} />
-                <img src={appstore} />
+              <div style={{ cursor: "pointer" }} className="download-buttons">
+                <img
+                  alt="playstore"
+                  onClick={() => {
+                    window.open(
+                      "https://play.google.com/store/apps/details?id=com.jjsoft.findsoulmate.v2muslim",
+                      "_blank"
+                    );
+                  }}
+                  src={playstore}
+                />
+                <img
+                  alt="appStore"
+                  onClick={() => {
+                    window.open(
+                      "https://apps.apple.com/us/app/find-soulmate-nikah-service/id6471280459",
+                      "_blank"
+                    );
+                  }}
+                  src={appstore}
+                />
               </div>
             </div>
           </div>
@@ -919,7 +945,7 @@ Islahi | B.A. | Psychological Counselor | Al-Quran & Science Researcher | IHRDP 
               <div className="map">
                 <object
                   style={{ border: 0, height: 280, width: "100%" }}
-                  data="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d232.95262895865497!2d80.0027386988361!3d6.4310592967242854!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae22e840c202263%3A0x49e3206857031de1!2sA2%20Aluthgama%20-%20Mathugama%20Rd%2C%20Aluthgama%2012080!5e1!3m2!1sen!2slk!4v1685776949659!5m2!1sen!2slk"
+                  data="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d4047213.2839410105!2d80.70625!3d7.857685!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x27ca9a9ee5667a55%3A0x945ff0dcc5826f68!2sFind%20Soulmate%20Pvt%20Ltd!5e0!3m2!1sen!2slk!4v1699612292749!5m2!1sen!2slk"
                 />
               </div>
             </div>

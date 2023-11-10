@@ -44,7 +44,11 @@ flex-wrap: wrap;
     display: flex;
     justify-content: space-evenly;
 flex-wrap: wrap;
+gap: 2px;
+}
 
+.download-buttons> img:hover{
+  scale: 1.1;
 }
 
 
