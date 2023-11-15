@@ -49,6 +49,7 @@ import API from "./API";
 import { extractGenderAndDOB } from "./NicExtractor";
 import { CountryList } from "./assets/CountryList";
 import { doesSectionFormatHaveLeadingZeros } from "@mui/x-date-pickers/internals/hooks/useField/useField.utils";
+import VerificationDetails from "./components/VerificationDetails";
 
 const steps = ["Personal Details", "Profile Details", "Summary"];
 
@@ -129,7 +130,7 @@ export default function Register(props) {
       console.log(city[0]);
       setCityList(city[0]);
     }
-  }, [values.district]);
+  }, [values.district, values.province]);
   useEffect(() => {
     if (values.province && values.province !== "") {
       const distr = getDistrictList(values.province).map((y) =>
@@ -341,7 +342,7 @@ export default function Register(props) {
         contactDetails: [{ mobile }, { email }],
         socialMediaDetails: [{ whatsapp }],
         isWeddingFixed: false,
-        profileActivation: true,
+        profileActivation: false,
       };
       console.log({ save_data });
       dispatch(saveProfile(save_data));
@@ -502,6 +503,8 @@ export default function Register(props) {
         </React.Fragment>
       ) : (
         <React.Fragment>
+
+          <VerificationDetails/>
           <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography>
 
           {activeStep === 0 && (

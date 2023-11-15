@@ -126,3 +126,71 @@ gap: 2px;
 .left-align {
   text-align: left !important;
 }
+
+ /* Default styles */
+.banner {
+  background-color: #abd2ff;
+  padding: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.notice {
+  font-size: 18px;
+  margin: 10px;
+}
+
+.verification-text {
+  margin-bottom: 15px;
+}
+
+.banner-list {
+  list-style-type: none;
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+
+.banner-list li {
+  margin-bottom: 5px;
+  position: relative;
+}
+
+.banner-list li span {
+  font-size: 12px;
+}
+
+.note-text {
+  margin-bottom: 10px;
+}
+
+.close-button {
+  padding: 8px 16px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+  .banner {
+    font-size: 12px;
+  }
+
+  .banner-list li span {
+    font-size: 10px;
+  }
+
+  .notice {
+    font-size: 16px;
+  }
+}
+
+ 
+
+/* Other icon style */
+

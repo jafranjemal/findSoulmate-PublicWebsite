@@ -191,7 +191,7 @@ const PasswordPolicyForm = () => {
 
     dispatch(addStepTwo(data));
     dispatch(addProfilePic(photo));
-  }, [values, password, photo, confirmPassword, isTermsChecked]);
+  }, [password, photo, confirmPassword, isTermsChecked]);
 
   return (
     <div className={classes.formContainer}>
@@ -345,7 +345,7 @@ const PasswordPolicyForm = () => {
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={handlePasswordChange}
-              error={!isPasswordValid()}
+              error={password !=="" ? !isPasswordValid() : false}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -388,8 +388,9 @@ const PasswordPolicyForm = () => {
             )}
           </FormControl>
         </Grid>
+        
 
-        {password !== "" && (
+        {password !== "" && !getPasswordRequirementsStatus().find(x=> !x.isSatisfied) && (
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
               <TextField
