@@ -23,6 +23,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.4.0",
+    "caniuse-lite": "^1.0.30001562",
     "date-fns": "^2.30.0",
     "dayjs": "^1.11.7",
     "get-srilanka-districts-cities": "^1.0.3",
