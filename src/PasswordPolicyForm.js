@@ -261,7 +261,7 @@ const PasswordPolicyForm = () => {
             autocompleteSearch={false}
             defaultMask="(..) ..-..-..."
             enableSearch={false}
-            preferredCountries={["lk","sa","qa","ae", "kw","us"]}
+            preferredCountries={["lk", "sa", "qa", "ae", "kw", "us"]}
             country={"lk"}
             masks={{ lk: "(..) ..-..-..." }}
             value={values.mobile}
@@ -291,8 +291,7 @@ const PasswordPolicyForm = () => {
             required
           /> */}
 
-          
-<PhoneInput
+          <PhoneInput
             inputProps={{
               style: {
                 height: 60,
@@ -306,7 +305,7 @@ const PasswordPolicyForm = () => {
             autocompleteSearch={false}
             defaultMask="(..) ..-..-..."
             enableSearch={false}
-            preferredCountries={["lk","sa","qa","ae", "kw","us"]}
+            preferredCountries={["lk", "sa", "qa", "ae", "kw", "us"]}
             country={"lk"}
             masks={{ lk: "(..) ..-..-..." }}
             value={values.whatsapp}
@@ -345,7 +344,7 @@ const PasswordPolicyForm = () => {
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={handlePasswordChange}
-              error={password !=="" ? !isPasswordValid() : false}
+              error={password !== "" ? !isPasswordValid() : false}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -388,39 +387,39 @@ const PasswordPolicyForm = () => {
             )}
           </FormControl>
         </Grid>
-        
 
-        {password !== "" && !getPasswordRequirementsStatus().find(x=> !x.isSatisfied) && (
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <TextField
-                id="confirm-password"
-                label="Confirm Password"
-                variant="outlined"
-                type={showPassword ? "text" : "password"}
-                value={confirmPassword}
-                onChange={handleConfirmPasswordChange}
-                error={!isConfirmPasswordValid()}
-                helperText={
-                  isConfirmPasswordValid() ? (
-                    <div style={{ color: "green", marginTop: 10 }}>
-                      {" "}
-                      <CheckCircle color="success" /> Password and Confirmed
-                    </div>
-                  ) : (
-                    <div style={{ color: "red", marginTop: 10 }}>
-                      {" "}
-                      <Cancel color="error" /> Password and Confirm Password do
-                      not match
-                    </div>
-                  )
-                }
-              />
+        {password !== "" &&
+          !getPasswordRequirementsStatus().find((x) => !x.isSatisfied) && (
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <TextField
+                  id="confirm-password"
+                  label="Confirm Password"
+                  variant="outlined"
+                  type={showPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={handleConfirmPasswordChange}
+                  error={!isConfirmPasswordValid()}
+                  helperText={
+                    isConfirmPasswordValid() ? (
+                      <div style={{ color: "green", marginTop: 10 }}>
+                        {" "}
+                        <CheckCircle color="success" /> Password and Confirmed
+                      </div>
+                    ) : (
+                      <div style={{ color: "red", marginTop: 10 }}>
+                        {" "}
+                        <Cancel color="error" /> Password and Confirm Password
+                        do not match
+                      </div>
+                    )
+                  }
+                />
 
-              {/* {isPasswordValid() ? "Password is valid" : "Password is invalid"} */}
-            </FormControl>
-          </Grid>
-        )}
+                {/* {isPasswordValid() ? "Password is valid" : "Password is invalid"} */}
+              </FormControl>
+            </Grid>
+          )}
       </Grid>
       <Box className={classes.passwordStrength}>
         <Typography

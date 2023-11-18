@@ -130,7 +130,8 @@ export default function Register(props) {
       console.log(city[0]);
       setCityList(city[0]);
     }
-  }, [values.district, values.province]);
+  }, [values.district]);
+
   useEffect(() => {
     if (values.province && values.province !== "") {
       const distr = getDistrictList(values.province).map((y) =>
@@ -146,8 +147,8 @@ export default function Register(props) {
 
   function capitalizeText(text) {
     // Split the input text into words
-    const words = text.split(' ');
-  
+    const words = text.split(" ");
+
     // Capitalize the first character of each word
     const capitalizedWords = words.map((word) => {
       // Ensure the word is not an empty string
@@ -155,11 +156,11 @@ export default function Register(props) {
         // Capitalize the first character and convert the rest to lowercase
         return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
       }
-      return '';
+      return "";
     });
-  
+
     // Join the capitalized words back together
-    return capitalizedWords.join(' ');
+    return capitalizedWords.join(" ");
   }
 
   const dispatch = useDispatch();
@@ -287,7 +288,7 @@ export default function Register(props) {
         },
       ];
 
-      setLoading(true)
+      setLoading(true);
 
       if (profilePicture !== null) {
         const formData = new FormData();
@@ -347,7 +348,7 @@ export default function Register(props) {
       console.log({ save_data });
       dispatch(saveProfile(save_data));
 
-      setLoading(false)
+      setLoading(false);
     }
 
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -388,24 +389,33 @@ export default function Register(props) {
     if (name === "nic" && (value.length === 9 || value.length === 12)) {
       const { dateOfBirth, gender } = extractGenderAndDOB(value);
 
+      console.log({ dateOfBirth, gender });
       if (dateOfBirth !== "") {
         const _dob = new Date(dateOfBirth); //.toString();
-        setDOB(_dob);
-        setValues({
-          ...values,
-          [name]: value,
-          ["gender"]: gender,
-          ["dob"]: _dob.toISOString(),
-        });
+
+        try {
+          _dob.toISOString();
+
+          console.log("dob ", _dob);
+          setDOB(_dob);
+          setValues({
+            ...values,
+            [name]: value,
+            gender: gender,
+            dob: _dob.toISOString(),
+          });
+        } catch (err) {
+          console.log("dob error");
+        }
       }
     }
   };
 
-  const onClose = ()=>{
-    handleReset()
+  const onClose = () => {
+    handleReset();
     dispatch(removeError());
     props.modelClosed();
-  }
+  };
 
   if (isSaved) {
     return (
@@ -503,8 +513,7 @@ export default function Register(props) {
         </React.Fragment>
       ) : (
         <React.Fragment>
-
-          <VerificationDetails/>
+          <VerificationDetails />
           <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography>
 
           {activeStep === 0 && (
@@ -777,8 +786,17 @@ export default function Register(props) {
       Skip
     </Button>
   )} */}
-            <Button variant="contained" color="error" disabled={loading} onClick={handleNext}>
-              {activeStep === steps.length - 1 ? loading ? "Submitting...":"Finish" : "Next"}
+            <Button
+              variant="contained"
+              color="error"
+              disabled={loading}
+              onClick={handleNext}
+            >
+              {activeStep === steps.length - 1
+                ? loading
+                  ? "Submitting..."
+                  : "Finish"
+                : "Next"}
             </Button>
           </div>
         </React.Fragment>

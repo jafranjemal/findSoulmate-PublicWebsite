@@ -55,7 +55,7 @@ const VerificationDetails = () => {
   </p>
 
   <p class="verification-text">
-    We prioritize authenticity, verifying each profile before activation. Our free verification process includes checks for:
+    We prioritize authenticity, <span style={{fontWeight:'bold'}}>verifying each profile before activation.</span> Our free verification process includes checks for:
   </p>
 
   <ul class="banner-list">

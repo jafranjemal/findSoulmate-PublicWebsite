@@ -13,24 +13,37 @@ const MONTHS = [
     { name: 'December', days: 31 },
   ];
   
- export function extractGenderAndDOB(nicNumber) {
-    if (isValidNIC(nicNumber)) {
-      const extractedData = extractDataFromNIC(nicNumber);
-      const days = extractedData.dayList;
-      const foundData = findDayAndGender(days);
+  export function extractGenderAndDOB(nicNumber) {
+    try {
+      if (isValidNIC(nicNumber)) {
+        const extractedData = extractDataFromNIC(nicNumber);
+        const days = extractedData.dayList;
+        const foundData = findDayAndGender(days);
   
-      const month = foundData.month;
-      const year = extractedData.year;
-      const day = foundData.day;
-      const gender = foundData.gender;
+        const month = foundData.month;
+        const year = extractedData.year;
+        const day = foundData.day;
+        const gender = foundData.gender;
   
-      const formattedDOB = formatDOB(day, month, year);
-      return {
-        dateOfBirth: formattedDOB,
-        gender,
-      };
-    } else {
-      throw new Error('Invalid NIC Number');
+        const formattedDOB = formatDOB(day, month, year);
+        return {
+          dateOfBirth: formattedDOB,
+          gender,
+        };
+      } else {
+        throw new Error('Invalid NIC Number');
+      }
+    } catch (error) {
+      if (error instanceof RangeError) {
+        // Handle invalid time value error here
+        console.error('Error:', error.message);
+        return {
+          dateOfBirth: null, // Set default values or handle as needed
+          gender: null,
+        };
+      } else {
+        throw error; // Re-throw other errors to maintain the error propagation
+      }
     }
   }
   
