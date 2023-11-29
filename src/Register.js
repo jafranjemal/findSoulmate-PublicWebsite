@@ -100,6 +100,16 @@ export default function Register(props) {
 
   const [countryList, setCountryList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [prevDOB, setPrevDOB] = useState(values.dob);
+  const currentDate = new Date();
+  const maxDate = new Date(currentDate.getFullYear() - 17, currentDate.getMonth(), currentDate.getDate());
+
+  useEffect(() => {
+    if (values.dob !== prevDOB) {
+      setPrevDOB(values.dob);
+    }
+  }, [values.dob, prevDOB]);
+
 
   useEffect(() => {
     ScrollToTopOnMount();
@@ -186,7 +196,7 @@ export default function Register(props) {
       const age = today.diff(dob, "years");
 
       console.log("Age:", age);
-      if (age <= 17) return alert(msg);
+      if (age <= 17 || values.gender ==="") return alert(msg);
       // Display the calculated age
       const data = { ...values, dob, age };
       dispatch(addStepOne(data));
@@ -378,38 +388,85 @@ export default function Register(props) {
     dispatch(clearAll());
   };
 
+  // const onChange = (e) => {
+  //   const { name, value } = e.target;
+  //   console.log(name, value, value.length);
+  //   setValues({
+  //     ...values,
+  //     [name]: value,
+  //   });
+
+  //   if (name === "nic" && (value.length === 9 || value.length === 12)) {
+  //     const { dateOfBirth, gender } = extractGenderAndDOB(value);
+
+  //     console.log({ dateOfBirth, gender });
+  //     if (dateOfBirth !== "") {
+  //       const _dob = new Date(dateOfBirth); //.toString();
+
+  //       try {
+  //         _dob.toISOString();
+
+  //         console.log("dob ", _dob);
+  //         setDOB(_dob);
+  //         setValues({
+  //           ...values,
+  //           [name]: value,
+  //           gender: gender,
+  //           dob: _dob.toISOString(),
+  //         });
+  //       } catch (err) {
+  //         console.log("dob error");
+  //       }
+  //     }
+  //   }
+  // };
+
+
   const onChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, value, value.length);
-    setValues({
-      ...values,
-      [name]: value,
-    });
+    let updatedValues = { ...values };
+  
+    if (name === "nic") {
 
-    if (name === "nic" && (value.length === 9 || value.length === 12)) {
-      const { dateOfBirth, gender } = extractGenderAndDOB(value);
+      if((value.length === 9 || value.length === 12)){
 
-      console.log({ dateOfBirth, gender });
-      if (dateOfBirth !== "") {
-        const _dob = new Date(dateOfBirth); //.toString();
-
-        try {
-          _dob.toISOString();
-
-          console.log("dob ", _dob);
-          setDOB(_dob);
-          setValues({
-            ...values,
-            [name]: value,
-            gender: gender,
-            dob: _dob.toISOString(),
-          });
-        } catch (err) {
-          console.log("dob error");
+        const { dateOfBirth, gender } = extractGenderAndDOB(value);
+        console.log("date of bith ", dateOfBirth);
+        if (dateOfBirth !== "") {
+          const parsedDOB = dayjs(dateOfBirth, "DD-MM-YYYY");
+          console.log("parsedDOB ", parsedDOB);
+          if (parsedDOB.isValid()) {
+            setDOB(parsedDOB.toDate());
+            updatedValues = {
+              ...values,
+              [name]: value,
+              ["gender"]: gender,
+              ["dob"]: parsedDOB.toISOString(),
+            };
+          } else {
+            console.error("Invalid date of birth");
+          }
         }
+
+      }else{
+        updatedValues = {
+          ...values,
+          [name]: value,
+          ["gender"]: "",
+          ["dob"]: currentDate.toISOString(),
+        };
       }
+     
+    } else {
+      updatedValues = {
+        ...values,
+        [name]: value,
+      };
     }
+  
+    setValues(updatedValues);
   };
+  
 
   const onClose = () => {
     handleReset();
@@ -429,6 +486,8 @@ export default function Register(props) {
   if (registerError) {
     return <AlertBox message={errorMsg} type="Error" handleBack={handleBack} />;
   }
+
+  
 
   return (
     <Box>
@@ -591,10 +650,16 @@ export default function Register(props) {
                     label="NIC"
                     onChange={onChange}
                     name="nic"
-                    type="number"
+                    
                     value={values.nic}
                     fullWidth
                     required
+                    type="number"
+                    inputProps={{
+                      minLength: 9,
+                      inputMode: "numeric", // Trigger numeric keyboard on mobile devices
+                      pattern: "[0-9]*", // Ensure only numeric input is allowed
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={12} md={3}>
@@ -619,9 +684,17 @@ export default function Register(props) {
                       value={dayjs(values.dob)}
                       onChange={(d) => setDOB(d.toISOString())}
                       //onBlur={handleBlur}
-                      name="dob"
+                      maxDate={maxDate}
+                      
+      name="dob"
+      sx={{
+        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+          borderColor: values.dob !== prevDOB ? "green" : "", // Change border color to green when value changes
+        },
+      }}
                       // error={Boolean(touched.dob) && Boolean(errors.dob)}
                       // helperText={touched.dob && errors.dob}
+                    
                     />
                   </LocalizationProvider>
                 </Grid>

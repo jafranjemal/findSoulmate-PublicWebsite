@@ -92,10 +92,46 @@ const MONTHS = [
     return (nicNumber.length === 9 || nicNumber.length === 12) && !isNaN(nicNumber);
   }
   
+  // function formatDOB(day, month, year) {
+  //   const formattedMonth = month.length > 1 ? month : '0' + month;
+  //   const formattedDay = day.length > 1 ? day : '0' + day;
+  //   return `${formattedMonth}/${formattedDay}/${year}`;
+  // }
+
   function formatDOB(day, month, year) {
-    const formattedMonth = month.length > 1 ? month : '0' + month;
+    const monthsMap = {
+      January: '01',
+      February: '02',
+      March: '03',
+      April: '04',
+      May: '05',
+      June: '06',
+      July: '07',
+      August: '08',
+      September: '09',
+      October: '10',
+      November: '11',
+      December: '12',
+    };
+  
+    const formattedMonth = monthsMap[month] || 'Invalid Month'; // Convert month name to its numeric representation
+  
     const formattedDay = day.length > 1 ? day : '0' + day;
-    return `${formattedMonth}/${formattedDay}/${year}`;
+  
+    let formattedYear;
+    if (year.length === 2) {
+      const currentYear = new Date().getFullYear().toString();
+      const currentCentury = parseInt(currentYear.substring(0, 2), 10);
+      const inputYear = parseInt(year, 10);
+  
+      const inputCentury = inputYear > parseInt(currentYear.substring(2), 10) ? currentCentury - 1 : currentCentury;
+  
+      formattedYear = `${inputCentury}${year}`;
+    } else {
+      formattedYear = year;
+    }
+  
+    return `${formattedDay}/${formattedMonth}/${formattedYear}`;
   }
   
   // module.exports = {

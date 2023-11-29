@@ -155,9 +155,9 @@ const PasswordPolicyForm = () => {
 
   const getPasswordRequirementsStatus = () => {
     return [
-      { label: "At least one uppercase letter", isSatisfied: isUppercase },
-      { label: "At least one number", isSatisfied: isNumber },
-      { label: "Minimum 8 characters", isSatisfied: isMinimum8Digits },
+      { label: "Add at least one English uppercase letter anywhere in your password.  ", isSatisfied: isUppercase },
+      { label: "Add at least one number anywhere in your password.", isSatisfied: isNumber },
+      { label: "Minimum 8 characters length need in your password.", isSatisfied: isMinimum8Digits },
     ];
   };
 
@@ -327,11 +327,15 @@ const PasswordPolicyForm = () => {
             id="outlined-basic"
             label="Email"
             variant="outlined"
-            value={values.email}
+            value={values.email  ? values.email.toLowerCase() : ''}
             onChange={onChange}
             name="email"
             fullWidth
             required
+            inputProps={{
+              inputMode: "email",
+              
+            }}
           />
         </Grid>
 
@@ -360,7 +364,7 @@ const PasswordPolicyForm = () => {
               }}
             />
             {!isConfirmPasswordValid() && (
-              <FormHelperText className={classes.passwordRequirements}>
+              <div className={classes.passwordRequirements}>
                 {getPasswordRequirementsStatus().map((requirement, index) => (
                   <Box
                     key={index}
@@ -383,7 +387,7 @@ const PasswordPolicyForm = () => {
                     {requirement.label}
                   </Box>
                 ))}
-              </FormHelperText>
+              </div>
             )}
           </FormControl>
         </Grid>
