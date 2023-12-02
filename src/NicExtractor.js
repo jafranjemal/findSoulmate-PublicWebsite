@@ -25,7 +25,7 @@ const MONTHS = [
         const day = foundData.day;
         const gender = foundData.gender;
   
-        const formattedDOB = formatDOB(day, month, year);
+        const formattedDOB = formatDOB(day.toString(), month, year);
         return {
           dateOfBirth: formattedDOB,
           gender,
@@ -67,7 +67,7 @@ const MONTHS = [
         break;
       }
     }
-  
+   
     result.day = dayList;
     result.month = month;
     return result;
@@ -84,7 +84,7 @@ const MONTHS = [
       result.dayList = nicNumber.substr(4, 3);
       result.character = 'no';
     }
-  
+  console.log({result})
     return result;
   }
   
@@ -115,7 +115,7 @@ const MONTHS = [
     };
   
     const formattedMonth = monthsMap[month] || 'Invalid Month'; // Convert month name to its numeric representation
-  
+  console.log("day.length", typeof(day),day, day.length)
     const formattedDay = day.length > 1 ? day : '0' + day;
   
     let formattedYear;

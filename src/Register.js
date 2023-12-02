@@ -421,11 +421,25 @@ export default function Register(props) {
   //   }
   // };
 
+  function generateAboutMe(stepOne){
+
+      const aboutMe = `My name is ${stepOne.fullName}. I currently live at ${stepOne.address}, in the city of ${stepOne.city}, ${stepOne.province} province, within ${stepOne.country}. I was born in ${stepOne.bornPlace} and my date of birth is ${moment(stepOne.dob).format("DD/MM/yyyy")}.
+I identify as ${stepOne.gender} and hold a ${stepOne.marriageStatus} status. I stand at a height of ${stepOne.height} and weigh ${stepOne.weight}. My complexion is ${stepOne.complexion} with ${stepOne.eyeColor} eyes and ${stepOne.hairColor} hair.
+My occupation in ${stepOne.occupationCountry} involves ${stepOne.occupation}.
+    
+NIC: ${stepOne.nic}
+District: ${stepOne.district}
+Town/Area: ${stepOne.townArea}
+    `;
+
+    return aboutMe;
+  }
+
 
   const onChange = (e) => {
     const { name, value } = e.target;
     let updatedValues = { ...values };
-  
+    
     if (name === "nic") {
 
       if((value.length === 9 || value.length === 12)){
@@ -458,10 +472,20 @@ export default function Register(props) {
       }
      
     } else {
-      updatedValues = {
-        ...values,
-        [name]: value,
-      };
+      if(name ==="aboutMe"){
+        updatedValues = {
+          ...values,
+          [name]: value,
+          
+        };
+      }else{
+        updatedValues = {
+          ...values,
+          [name]: value,
+          ["aboutMe"]:generateAboutMe(updatedValues)
+        };
+      }
+     
     }
   
     setValues(updatedValues);
